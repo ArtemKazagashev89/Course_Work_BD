@@ -1,6 +1,8 @@
+from typing import Any, Dict
+
 import psycopg2
+
 from src.get_data_hh import get_companies, get_vacancies
-from typing import Dict, Any
 
 
 def create_database(database_name: str, params: Dict[str, Any]) -> None:

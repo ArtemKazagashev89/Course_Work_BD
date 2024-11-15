@@ -1,13 +1,13 @@
-import psycopg2
-from src.db_manager import DBManager
+from src.config import config
 from src.create_database import create_database, save_data_to_database
-from src.get_data_hh import get_companies, get_vacancies
+from src.db_manager import DBManager
 
 
 def main():
     """Функция взаимодействия с пользователем"""
 
     db_manager = DBManager()
+    params = config()
 
     while True:
         print("1. Получить компании и количество вакансий")
@@ -37,6 +37,7 @@ def main():
 
 
 if __name__ == "__main__":
-    create_database()
-    save_data_to_database()
+    params = config()
+    create_database(params)
+    save_data_to_database(params)
     main()
