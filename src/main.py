@@ -1,16 +1,13 @@
 import psycopg2
 from src.db_manager import DBManager
+from src.create_database import create_database, save_data_to_database
 from src.get_data_hh import get_companies, get_vacancies
 
 
 def main():
     """Функция взаимодействия с пользователем"""
 
-    conn = psycopg2.connect(dbname='postgres', host='localhost', password=39303, port=5432)
     db_manager = DBManager()
-
-
-
 
     while True:
         print("1. Получить компании и количество вакансий")
@@ -22,23 +19,24 @@ def main():
 
         choice = input("Выберите опцию: ")
 
-        if choice == '1':
+        if choice == "1":
             print(db_manager.get_companies_and_vacancies_count())
-        elif choice == '2':
+        elif choice == "2":
             print(db_manager.get_all_vacancies())
-        elif choice == '3':
+        elif choice == "3":
             print(db_manager.get_avg_salary())
-        elif choice == '4':
+        elif choice == "4":
             print(db_manager.get_vacancies_with_higher_salary())
-        elif choice == '5':
+        elif choice == "5":
             keyword = input("Введите ключевое слово: ")
             print(db_manager.get_vacancies_with_keyword(keyword))
-        elif choice == '0':
+        elif choice == "0":
             break
         else:
             print("Некорректный выбор, попробуйте снова.")
 
-    conn.close()
 
 if __name__ == "__main__":
+    create_database()
+    save_data_to_database()
     main()
