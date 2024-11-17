@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple
+from typing import Optional, List, Tuple
 
 import psycopg2
 
@@ -10,7 +10,7 @@ class DBManager:
         self.conn = psycopg2.connect(database=db_name, user="postgres", password=39303, port=5432)
         self.cursor = self.conn.cursor()
 
-    def get_companies_and_vacancies_count(self) -> List[Tuple[str, int]]:
+    def get_companies_and_vacancies_count(self) -> List[Tuple[str, Optional[int]]]:
         """Функция получает список всех компаний и количество вакансий у каждой компании"""
         with self.conn.cursor() as cursor:
             cursor.execute(
@@ -47,6 +47,6 @@ class DBManager:
 
     def close_connection(self):
         """Функция для закрытия конекшена с БД"""
-        if self.connection:
-            self.connection.close()
-            self.connection = None
+        if self.conn:
+            self.conn.close()
+            self.conn = None

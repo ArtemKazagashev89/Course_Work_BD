@@ -52,7 +52,7 @@ def save_data_to_database(database_name: str, params: Dict[str, Any]) -> None:
     conn = psycopg2.connect(dbname=database_name, **params)
     cur = conn.cursor()
 
-    companies = get_companies
+    companies = get_companies([49357, 106223, 1159819, 61750, 4750373, 5560707, 5563417, 1353073, 67843, 2603304])
     for company in companies:
         cur.execute("INSERT INTO companies (name) VALUES (%s)", (company["name"],))
         company_id = cur.fetchone()[0]
