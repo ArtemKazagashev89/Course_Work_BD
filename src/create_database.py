@@ -1,14 +1,10 @@
-from typing import Any, Dict
-
 import psycopg2
-
 from src.get_data_hh import get_companies, get_vacancies
 
-
-def create_database(database_name: str, params: Dict[str, Any]) -> None:
+def create_database(database_name: str, user: str, password: str) -> None:
     """Создание базы данных и таблиц для сохранения данных о компаниях и вакансиях."""
 
-    conn = psycopg2.connect(dbname="postgres", **params)
+    conn = psycopg2.connect(dbname="postgres", user=user, password=password, port=5432)
     conn.autocommit = True
     cur = conn.cursor()
 
@@ -17,7 +13,7 @@ def create_database(database_name: str, params: Dict[str, Any]) -> None:
 
     conn.close()
 
-    conn = psycopg2.connect(dbname=database_name, **params)
+    conn = psycopg2.connect(dbname=database_name, user=user, password=password, port=5432)
 
     with conn.cursor() as cur:
         cur.execute(
@@ -46,27 +42,36 @@ def create_database(database_name: str, params: Dict[str, Any]) -> None:
     conn.commit()
 
 
-def save_data_to_database(database_name: str, params: Dict[str, Any]) -> None:
+def save_data_to_database(database_name: str, user: str, password: str) -> None:
     """Сохранение данных о компаниях и вакансиях в базу данных."""
-
-    conn = psycopg2.connect(dbname=database_name, **params)
+    conn = psycopg2.connect(dbname=database_name, user=user, password=password, port=5432)
     cur = conn.cursor()
 
     companies = get_companies([49357, 106223, 1159819, 61750, 4750373, 5560707, 5563417, 1353073, 67843, 2603304])
     for company in companies:
-        cur.execute("INSERT INTO companies (name) VALUES (%s)", (company["name"],))
+        cur.execute("INSERT INTO companies (name) VALUES (%s) RETURNING company_id", (company["name"],))
         company_id = cur.fetchone()[0]
 
         vacancies = get_vacancies(company["id"])
         for vacancy in vacancies:
+            salary = vacancy.get("salary")
+            salary_from = salary.get("from") if salary else None
+            salary_to = salary.get("to") if salary else None
+            name = vacancy.get("name")
+            published_at = vacancy.get("published_at")
+            responsibility = vacancy.get("snippet", {}).get("responsibility", "")
+
+            # Отладочный вывод
+            print(f"Inserting into vacancies: company_id={company_id}, name={name}, salary_from={salary_from}, salary_to={salary_to}, published_at={published_at}, responsibility={responsibility}")
+
             cur.execute(
-                "INSERT INTO vacancies (company_id, name, salary,  published_at, responsibility) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO vacancies (company_id, name, salary, published_at, responsibility) VALUES (%s, %s, %s, %s, %s)",
                 (
                     company_id,
-                    vacancy["name"],
-                    vacancy["salary"],
-                    vacancy["published_at DATE"],
-                    vacancy["responsibility"],
+                    name,
+                    salary_from,
+                    published_at,
+                    responsibility,
                 ),
             )
 
