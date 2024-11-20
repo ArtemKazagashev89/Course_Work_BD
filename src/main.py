@@ -1,13 +1,15 @@
-from src.config import config
+
 from src.create_database import create_database, save_data_to_database
 from src.db_manager import DBManager
-
+from src.config import DB_NAME, USER, PASSWORD
 
 def main():
     """Функция взаимодействия с пользователем"""
 
-    db_manager = DBManager(database="postgresql", user="postgres", password=39303, port=5432)
-    params = config()
+
+
+    db_manager = DBManager(DB_NAME, USER, PASSWORD)
+
 
     while True:
         print("1. Получить компании и количество вакансий")
@@ -37,7 +39,6 @@ def main():
 
 
 if __name__ == "__main__":
-    params = config()
-    create_database("postgresql", params)
-    save_data_to_database("postgresql", params)
+    create_database(DB_NAME, USER, PASSWORD)
+    save_data_to_database(DB_NAME, USER, PASSWORD)
     main()
