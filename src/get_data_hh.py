@@ -1,18 +1,8 @@
-import requests
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-companies_ids = [
-    49357,
-    106223,
-    1159819,
-    61750,
-    4750373,
-    5560707,
-    5563417,
-    1353073,
-    67843,
-    2603304,
-]
+import requests
+
+companies_ids = [49357, 106223, 1159819, 61750, 4750373, 5560707, 5563417, 1353073, 67843, 2603304]
 
 
 def get_companies(companies_ids: List[int]) -> List[Dict[str, Any]]:
